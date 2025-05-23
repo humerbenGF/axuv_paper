@@ -211,7 +211,7 @@ def plot_elongation_li1_at_crashes(shots, high_res_shots, t_lims=[0,1000], crash
 
 
 
-def plot_elongation_li1_triple_matplotlib(shots_1, shots_2, shots_3, t_lims=[0,1000], elong_lims=[1.65,1.95], li1_lims=[0.35,1.0], faded_traces=False, high_res=False):
+def plot_elongation_li1_triple_matplotlib(shots_1, shots_2, shots_3, t_lims=[0,1000], elong_lims=[1.6,1.95], li1_lims=[0.35,1.0], faded_traces=False, high_res=False, title=False):
     # append all shots into shots
     shots = [*shots_1, *shots_2, *shots_3]
     # unpack t limits
@@ -318,15 +318,16 @@ def plot_elongation_li1_triple_matplotlib(shots_1, shots_2, shots_3, t_lims=[0,1
     colors = cmap(norm(a))
     
     # set size of figure
-    fig, axs = plt.subplots(1, 3, figsize=(10,4), dpi=250)
+    fig, axs = plt.subplots(1, 3, figsize=(11,4.5), dpi=400)
+    font_min = 12
+    
     axs = np.array([axs])  # Convert 1D to 2D array for consistent indexing
     
     # plot traces and scatter
     shots_2D = [shots_1, shots_2, shots_3]
-    group_descriptions = [r"a) $V_{form}=22kV$"+"\n"+r"$N_{caps}<=32$"+"\n"+r"$\psi_{gun}<100mWb$",
-                          r"b) $V_{form}=22kV$"+"\n"+r"$N_{caps}=48$"+"\n"+r"$\psi_{gun}<100mWb$",
-                          r"b) $V_{form}>=23kV$"+"\n"+r"$N_{caps}=48$"+"\n"+r"$\psi_{gun}>130mWb$"]
-    fontsize=14
+    group_descriptions = [r"a) $U_{form}\leq19.36MJ$"+"\n"+r"$\psi_{gun}<100mWb$",
+                          r"b) $U_{form}=29.04MJ$"+"\n"+r"$\psi_{gun}<100mWb$",
+                          r"c) $U_{form}\geq31.74MJ$"+"\n"+r"$\psi_{gun}>130mWb$"]
     
     for i in range(len(shots_2D)):
         shots_singlepanel = shots_2D[i]
@@ -336,7 +337,9 @@ def plot_elongation_li1_triple_matplotlib(shots_1, shots_2, shots_3, t_lims=[0,1
                     axs[0, i].plot(x_plotting_high_res[shot], y_plotting_high_res[shot], alpha=0.4, color='k', zorder=2)
                 else:
                     axs[0, i].plot(x_plotting[shot], y_plotting[shot], alpha=0.4, color='k', zorder=2)
-                axs[0, i].scatter(x_plotting[shot], y_plotting[shot], c=colors, zorder=3, marker='.')
+                axs[0, i].scatter(x_plotting[shot], y_plotting[shot], c=colors, zorder=3,
+                                  marker='P' if shot in shots_1 else 's' if shot in shots_2 else 'd' if shot in shots_3 else '.',
+                                  edgecolors='black', linewidths=0.5)
                 
         if faded_traces:
             for shot in shots:
@@ -345,7 +348,8 @@ def plot_elongation_li1_triple_matplotlib(shots_1, shots_2, shots_3, t_lims=[0,1
                         axs[0, i].plot(x_plotting_high_res[shot], y_plotting_high_res[shot], alpha=0.05, color='k', zorder=0)
                     else:
                         axs[0, i].plot(x_plotting[shot], y_plotting[shot], alpha=0.05, color='k', zorder=0)
-                    axs[0, i].scatter(x_plotting[shot], y_plotting[shot], c=colors, alpha=0.2, zorder=1, marker='.')
+                    axs[0, i].scatter(x_plotting[shot], y_plotting[shot], c=colors, alpha=0.2, zorder=1,
+                                      marker='P' if shot in shots_1 else 's' if shot in shots_2 else 'd' if shot in shots_3 else '.')
                     
 
         # settings for all individual panels
@@ -353,26 +357,30 @@ def plot_elongation_li1_triple_matplotlib(shots_1, shots_2, shots_3, t_lims=[0,1
         axs[0, i].set_ylim(elong_lims[0], elong_lims[1])
         axs[0, i].set_xlim(li1_lims[0], li1_lims[1])
             # labels
-        axs[0, i].text((li1_lims[1]-li1_lims[0])*0.025+li1_lims[0], (elong_lims[1]-elong_lims[0])*0.025+elong_lims[0], group_descriptions[i])
+        axs[0, i].text((li1_lims[1]-li1_lims[0])*0.025+li1_lims[0], (elong_lims[1]-elong_lims[0])*0.025+elong_lims[0], group_descriptions[i], fontsize=font_min)
             # axis titles and tick labels
-        axs[0, i].set_xlabel(r"$\ell_{i1}$", fontsize=fontsize)
+        axs[0, i].set_xlabel(r"$\ell_{i1}$", fontsize=font_min+2)
         if i != 0:
             axs[0, i].set_yticklabels([])  # Hide tick labels but keep the ticks
+            # tick param sizes
+        axs[0, i].tick_params(axis='both', labelsize=font_min)
             # grid
-        axs[0, i].grid(True)
+        axs[0, i].grid(True, alpha=0.4)
     
     # settings for the overall plot 
         # titles
-    plt.suptitle(r"LCFS Elongation $\mathcal{K}$ over Internal Inductance $\ell_{i1}$", fontsize=fontsize+2)
-    axs[0, 0].set_ylabel(r"$\mathcal{K}$", fontsize=fontsize)
+    plt.suptitle(r"LCFS Elongation $\mathcal{K}$ over Internal Inductance $\ell_{i1}$" if title else None, fontsize=font_min+6)
+    axs[0, 0].set_ylabel(r"$\mathcal{K}$", fontsize=font_min+2)
         # legend
     for i in range(len(times_plotting[list(times_plotting.keys())[0]])):
         axs[0, 1].scatter([],[], color=colors[i], label=f"t={int(times_plotting[list(times_plotting.keys())[0]][i]*1000)}ms")
         
         
+    # get legend
+    h, l = axs[0, 1].get_legend_handles_labels()
     plt.tight_layout()
-    plt.subplots_adjust(bottom=0.3)
-    axs[0, 1].legend(loc='lower center', ncol=6, bbox_to_anchor=(0.5, -0.55), frameon=False, fontsize=10)
+    plt.subplots_adjust(bottom=0.26, top=0.9)
+    fig.legend(h, l, loc='lower center', ncol=6, bbox_to_anchor=(0.5, 0), frameon=False, fontsize=font_min)
     
     
     # for i in range(len(x_plotting)):
@@ -386,8 +394,126 @@ def plot_elongation_li1_triple_matplotlib(shots_1, shots_2, shots_3, t_lims=[0,1
 
     # save figure
     plt.savefig("/home/jupyter-humerben/axuv_paper/plot_outputs/elongation_li1/elongation_li1_triple_plot.png")
+    plt.close()
     
     return
+
+
+def plot_elongation_li1_matplotlib_singleshot(shot, t_lims=[0,1000]):
+    # unpack t limits
+    t_min, t_max = t_lims[0], t_lims[1]
+    
+    # load crash data
+    
+    # load and set up multishot dataframes
+        # set up SBC and load data for normal time resolution data
+    sbc=Sbc()
+    sbc.experiment.set("pi3b")
+    df_multishot = sbc.get(asset="reconstruction", shot=shot, column=['li1', 'elong_lfs'], criteria="statistic = mean OR statistic = sigma")
+    df_multishot = df_multishot[(df_multishot.t >= t_min) & (df_multishot.t <= t_max)]
+        # set up SBC and load data for high time resolution data
+    sbc.project.set("high_time_res_recon_crashes")
+    df_multishot_high_res = sbc.get(asset="reconstruction", shot=shot, column=['li1', 'elong_lfs'], criteria="statistic = mean OR statistic = sigma")
+    df_multishot_high_res = df_multishot_high_res[(df_multishot_high_res.t >= t_min) & (df_multishot_high_res.t <= t_max)]
+
+    # save plotting arrays for low time res data
+        # set up arrays
+    x_plotting = []
+    y_plotting = []
+    shots_plotting = []
+    times_plotting = []
+    # iterate and save data
+    df = df_multishot
+    df = df[df.statistic == 'mean']
+    # get times, li1, elong_lfs and plot
+        # load scrambled arrays
+    times = np.array(df.t)
+    li1 = np.array(df.li1)
+    elong_lfs = np.array(df.elong_lfs)
+        # sort arrays
+    times_ind = np.argsort(times)
+    times = np.array([times[i] for i in times_ind])
+    li1 = np.array([li1[i] for i in times_ind])
+    elong_lfs = np.array([elong_lfs[i] for i in times_ind])
+    # gun_flux_arr = np.array([gun_flux[s] for i in times])
+    
+    if min(len(li1), len(elong_lfs), len(times)) > 0:   # len(gun_flux_arr)
+        x_plotting.append(li1)
+        y_plotting.append(elong_lfs)
+        shots_plotting.append(shot)
+        times_plotting.append(times)
+        # col_plotting.append(gun_flux_arr)
+    
+    # save plotting arrays for high res data
+    # save plotting arrays for low time res data
+        # set up arrays
+    x_plotting_high_res = []
+    y_plotting_high_res = []
+    shots_plotting_high_res = []
+    times_plotting_high_res = []
+    # iterate and save data
+    df = df_multishot_high_res
+    df = df[df.statistic == 'mean']
+    # get times, li1, elong_lfs and plot
+        # load scrambled arrays
+    times = np.array(df.t)
+    li1 = np.array(df.li1)
+    elong_lfs = np.array(df.elong_lfs)
+        # sort arrays
+    times_ind = np.argsort(times)
+    times = np.array([times[i] for i in times_ind])
+    li1 = np.array([li1[i] for i in times_ind])
+    elong_lfs = np.array([elong_lfs[i] for i in times_ind])
+    # gun_flux_arr = np.array([gun_flux[s] for i in times])
+    
+    if min(len(li1), len(elong_lfs), len(times)) > 0:   # len(gun_flux_arr)
+        x_plotting_high_res.append(li1)
+        y_plotting_high_res.append(elong_lfs)
+        shots_plotting_high_res.append(shot)
+        times_plotting_high_res.append(times)
+        # col_plotting.append(gun_flux_arr)
+
+    # generate colormaps for timing
+        # set proxy array
+    a=times_plotting[0]
+        # use proxy array to generate the colormap
+    norm = Normalize(vmin=np.min(a), vmax=np.max(a))
+    cmap = cm.get_cmap('plasma')
+    colors = cmap(norm(a))
+    
+    # set size of figure
+    fig = plt.figure(figsize=(4.5,4.2), dpi=350)
+    font_min=12
+    
+    # plot traces and scatter
+    for i in range(len(x_plotting)):
+        plt.plot(x_plotting_high_res[i], y_plotting_high_res[i], alpha=0.4, color='k', zorder=0)
+        plt.scatter(x_plotting[i], y_plotting[i], c=colors, zorder=1)
+            
+    # set limits
+    plt.xlim([0.35, 1])
+    plt.ylim([1.6,1.95])
+    
+    # add labels to plot
+        # title and axes
+    plt.title(f"Shot {shot} "+r"$\mathcal{K}$ over $\ell_{i1}$", fontsize=font_min+6)
+    plt.xlabel(r"$\ell_{i1}$", fontsize=font_min+2)
+    plt.ylabel(r"$\mathcal{K}$", fontsize=font_min+2)
+    plt.tick_params(axis='both', labelsize=font_min)
+    plt.grid(True, alpha=0.4)
+        # legend
+    for i in range(len(times_plotting[0])):
+        plt.scatter([],[], color=colors[i], label=f"t={int(times_plotting[0][i]*1000)}ms")
+    plt.legend(ncol=2, fontsize=font_min, columnspacing=0.5, handletextpad=0.3, handlelength=1.5)
+        # layout
+    plt.tight_layout()
+    
+    # save figure
+    plt.savefig(f"/home/jupyter-humerben/axuv_paper/plot_outputs/elongation_li1/elongation_li1_{shot}.png")
+    plt.close()
+    
+    return
+
 
 
 

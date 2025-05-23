@@ -57,5 +57,5 @@ if __name__ == '__main__':
     
     first_crash_stats.generate_first_crash_time_stats_for_multiple_groups(
         [non_sustain_low_gun_flux_and_formation, non_sustain_low_gun_flux_high_formation, non_sustain_high_gun_flux_and_formation], 
-        [r"$V_{form}=22kV$, $N_{caps}<=32$"+"\n"+"$\psi_{gun}<100mWb$", r"$V_{form}=22kV$, $N_{caps}=48$"+"\n"+"$\psi_{gun}<100mWb$", 
-         r"$V_{form}>=23kV$, $N_{caps}=48$"+"\n"+"$\psi_{gun}>130mWb$"], plots=True)
+        [r"$U_{form}\leq19.36MJ$"+"\n"+"$\psi_{gun}<100mWb$", r"$U_{form}=29.04MJ$"+"\n"+"$\psi_{gun}<100mWb$", 
+         r"$U_{form}\geq31.74MJ$"+"\n"+"$\psi_{gun}>130mWb$"], plots=True)

@@ -59,11 +59,11 @@ def plot_axuv_phase_calc(shot, t_lims=[0, 1000], sbc=Sbc()):
     plt.plot(t, A_raw, alpha=0.5, linewidth=0.5, label="Unfiltered Soft X-ray Data")
     plt.plot(t, A_sg, alpha=0.9, label="Filtered Soft X-ray Data")
         # vertical lines
-    plt.vlines(phase_integers, min(A_sg), max(A_sg), color='k', label="Integer Values of Instability Phase")
+    plt.vlines(phase_integers, min(A_sg), max(A_sg), color='k', label="Integer Values of Crash Phase")
     
     # labels/titles
         # title
-    plt.title("Soft X-ray Photodiode Current over Time with Instability Phase")
+    plt.title("Soft X-ray Photodiode Current over Time with Crash Phase")
         # axes
     plt.ylabel(r'$I_{photodiode}$ [nA]')
     plt.xlabel('time [ms]')
@@ -123,6 +123,8 @@ def plot_axuv_norm_non_norm(shot, t_lims=[0, 1000], sbc=Sbc()):
     
     # make plot
     fig, axs = plt.subplots(1, 2, figsize=(10, 5), dpi=400)
+    
+    font_min=12
 
     # Ensure axs is always a 2D array
     axs = np.array([axs])  # Convert 1D to 2D array for consistent indexing
@@ -132,9 +134,14 @@ def plot_axuv_norm_non_norm(shot, t_lims=[0, 1000], sbc=Sbc()):
         crash_boundaries = [crash_df.pre_crash_t[i]*1000, crash_df.t[i]*1000, crash_df.post_crash_t[i]*1000]
         axs[0, 0].vlines([crash_boundaries[0], crash_boundaries[2]], min(A_sg), max(A_sg), linewidth=0.5, color='r', alpha=0.8)
         axs[0, 0].fill_between(x=[crash_boundaries[0], crash_boundaries[2]], y1=min(A_sg), y2=max(A_sg), color='r', alpha=0.2)
+        axs[0, 0].vlines([crash_boundaries[1]], min(A_sg), max(A_sg), color='k', zorder=10)
+    axs[0, 0].vlines([t_lims[0]], min(A_sg), max(A_sg), color='k', zorder=10)
+    axs[0, 0].vlines([t_lims[1]*1000], min(A_sg), max(A_sg), color='k', zorder=10)
+        
         
     # make false labels for non-norm crash data
-    axs[0, 0].fill_between(x=[0], y1=[0], color='r', alpha=0.2, label='Soft X-ray Instability Region')
+    axs[0, 0].fill_between(x=[0], y1=[0], color='r', alpha=0.2, label='Soft X-ray Crash Region')
+    axs[0, 0].vlines([], min(A_sg), max(A_sg), color='k', label='Integer Values of Crash Phase')
     axs[0, 0].scatter([],[], marker='x', color='k')
 
     
@@ -144,8 +151,8 @@ def plot_axuv_norm_non_norm(shot, t_lims=[0, 1000], sbc=Sbc()):
     axs[0, 0].plot(t, A_raw, alpha=0.5, linewidth=0.5, label="Unfiltered Soft X-ray Data")
     axs[0, 0].plot(t, A_sg, alpha=0.9, label="Filtered Soft X-ray Data")
         # set labels and make legend
-    axs[0, 0].set_ylabel(r"$I_{photodiode}$ [nA]")
-    axs[0, 0].set_xlabel(r"time [ms]")
+    axs[0, 0].set_ylabel(r"$I_{photodiode}$ [nA]", fontsize=font_min+2)
+    axs[0, 0].set_xlabel(r"time [ms]", fontsize=font_min+2)
     
     # make normalized plot
         # plot primary traces
@@ -153,8 +160,8 @@ def plot_axuv_norm_non_norm(shot, t_lims=[0, 1000], sbc=Sbc()):
     axs[0, 1].plot(t, dA_norm, label="Filtered Soft X-ray First Time Derivative Data")
     axs[0, 1].plot(t, ddA_norm, label="Filtered Soft X-ray Second Time Derivative Data")
         # make legend
-    axs[0, 1].set_ylabel(r"Normalized Soft X-ray Data")
-    axs[0, 1].set_xlabel(r"time [ms]")
+    axs[0, 1].set_ylabel(r"Normalized Soft X-ray Data", fontsize=font_min+2)
+    axs[0, 1].set_xlabel(r"time [ms]", fontsize=font_min+2)
     
     # add foreground crash info
     for i in range(len(crash_df.t)):
@@ -163,20 +170,30 @@ def plot_axuv_norm_non_norm(shot, t_lims=[0, 1000], sbc=Sbc()):
         axs[0, 1].vlines([crash_boundaries[1]], -1, 1, linewidth=0.5, color='k', alpha=0.8)
         
         
-    axs[0, 1].vlines([crash_boundaries[0], crash_boundaries[2]], -1, 1, linewidth=0.5, color='r', alpha=0.8, label="Instability Boundaries")
-    axs[0, 1].vlines([crash_boundaries[1]], -1, 1, linewidth=0.5, color='k', alpha=0.8, label="Peak of Soft X-ray Instability")
+    axs[0, 1].vlines([crash_boundaries[0], crash_boundaries[2]], -1, 1, linewidth=0.5, color='r', alpha=0.8, label="Crash Boundaries")
+    axs[0, 1].vlines([crash_boundaries[1]], -1, 1, linewidth=0.5, color='k', alpha=0.8, label="Peak of Soft X-ray Crash")
+    
+    # misc settings for both axes
+        # grid
+    axs[0, 0].grid(True, alpha=0.4)
+    axs[0, 1].grid(True, alpha=0.4)
+        # tick params
+    axs[0, 0].tick_params(axis='both', labelsize=font_min)
+    axs[0, 1].tick_params(axis='both', labelsize=font_min)
+    
+    plt.tight_layout()
+    plt.subplots_adjust(bottom=0.35)
     
     # set legends for both plots
-    axs[0, 0].legend(fontsize=10, columnspacing=0.5, handletextpad=0.3, handlelength=1.5, loc='upper center', bbox_to_anchor=(0.5, -0.25), frameon=False)
-    axs[0, 1].legend(fontsize=10, columnspacing=0.5, handletextpad=0.3, handlelength=1.5, loc='upper center', bbox_to_anchor=(0.5, -0.25), frameon=False)
+    axs[0, 0].legend(fontsize=font_min, columnspacing=0.5, handletextpad=0.3, handlelength=1.5, loc='upper center', bbox_to_anchor=(0.5, -0.125), frameon=False)
+    axs[0, 1].legend(fontsize=font_min, columnspacing=0.5, handletextpad=0.3, handlelength=1.5, loc='upper center', bbox_to_anchor=(0.5, -0.125), frameon=False)
     
     # Add captions below subplots (adjust y position as needed)
     # axs[0, 0].text(0.5, -0.90, "a) Soft X-ray Data", ha='center', va='top', transform=axs[0, 0].transAxes, fontsize=12)
     # axs[0, 1].text(0.5, -0.90, "b) Normalized & Derivative Soft X-ray Data", ha='center', va='top', transform=axs[0, 1].transAxes, fontsize=12)
     
     # save plot
-    plt.tight_layout()
-    plt.savefig(f"/home/jupyter-humerben/axuv_paper/plot_outputs/axuv_norm_non-norm_{shot}.png")
+    plt.savefig(f"/home/jupyter-humerben/axuv_paper/plot_outputs/crash_detection/axuv_norm_non-norm_{shot}.png")
 
     
     

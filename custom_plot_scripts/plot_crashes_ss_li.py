@@ -46,7 +46,7 @@ def plot_percent_chance_crash_before_time_over_ss_li(shots, times_of_interest, s
     data_df_multitime = pd.DataFrame(data_dict)
     
     # make figure
-    plt.figure(figsize=(6, 4), dpi=300)
+    plt.figure(figsize=(6, 4.5), dpi=300)
     
     # final processing and plotting of loaded data
     for t in range(len(times_of_interest)):
@@ -75,17 +75,18 @@ def plot_percent_chance_crash_before_time_over_ss_li(shots, times_of_interest, s
 
         plt.plot(x_smoothed, smoothed_pct, label=f'% Chance of Crash at t<{round(times_of_interest[t]*1000, 1)}ms')
 
-    fontsize=8
+    fontsize=12
     # Plotting
     plt.xlabel('Shots Since Lithium Pot Coat', fontsize=fontsize+2)
-    plt.ylabel('Percentage Chance of Crash Occurance', fontsize=fontsize+2)
-    plt.title(f'Percentage Chance of Crash Occurance Over Shots Since Lithium\n{len(np.unique(data_df_multitime.shot))} Shots, Sustain > {min_sustain}V' 
-              if sustain else f'Percentage Chance of Crash Occurance Over Shots Since Lithium\n{len(np.unique(data_df_multitime.shot))} Shots, Sustain = 0V', fontsize=fontsize+4)
+    plt.ylabel('Percentage Chance of\nCrash Occurance', fontsize=fontsize+2)
+    # plt.title(f'Percentage Chance of Crash Occurance Over Shots Since Lithium\n{len(np.unique(data_df_multitime.shot))} Shots, Sustain > {min_sustain}V' 
+    #           if sustain else f'Percentage Chance of Crash Occurance Over Shots Since Lithium\n{len(np.unique(data_df_multitime.shot))} Shots, Sustain = 0V', fontsize=fontsize+4)
     plt.grid(True)
     plt.legend(loc='lower right', fontsize=fontsize)
+    plt.tick_params(axis='both', labelsize=fontsize)
     plt.tight_layout()
-    plt.savefig("/home/jupyter-humerben/axuv_paper/plot_outputs/percentage_crash_before_t_ss_li_sustain.png" 
-                if sustain else "/home/jupyter-humerben/axuv_paper/plot_outputs/percentage_crash_before_t_ss_li_non_sustain.png")
+    plt.savefig("/home/jupyter-humerben/axuv_paper/plot_outputs/crashes/percentage_crash_before_t_ss_li_sustain.png"
+                if sustain else "/home/jupyter-humerben/axuv_paper/plot_outputs/crashes/percentage_crash_before_t_ss_li_non_sustain.png")
     
     return
 
@@ -114,4 +115,4 @@ def rolling_mean_by_x(x, event, x_window=5.0, min_samples=5):
 
 if __name__ == '__main__':
     shot_list = [i+20000 for i in range(2900)]
-    plot_percent_chance_crash_before_time_over_ss_li(shot_list, [0.001, 0.003, 0.005, 0.007, 0.009], sustain=True, max_ss_li=200)
+    plot_percent_chance_crash_before_time_over_ss_li(shot_list, [0.003, 0.005, 0.007, 0.009, 0.011], sustain=True, max_ss_li=200)

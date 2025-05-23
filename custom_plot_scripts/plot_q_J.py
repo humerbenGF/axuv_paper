@@ -16,7 +16,7 @@ from gf_sandbox_client.sbc import Sbc
 ###################################################################################################
 from data_loaders.load_crash_data import load_crash_data
 
-def plot_q_J_side_by_side_singleshot(shot, t_lims=[0, 1000], r_lims=[-0.025, 0.475], q_lims=[0, 4], J_lims=[0, 1], sbc=Sbc(), plot_crashes=False, invert_multi_plot=False):
+def plot_q_J_side_by_side_singleshot(shot, t_lims=[0, 1000], r_lims=[-0.025, 0.475], q_lims=[0, 4], J_lims=[0, 1], sbc=Sbc(), plot_crashes=False, invert_multi_plot=False, title=False):
     # unpack limits
     t_min, t_max = t_lims
     r_min, r_max = r_lims
@@ -87,11 +87,11 @@ def plot_q_J_side_by_side_singleshot(shot, t_lims=[0, 1000], r_lims=[-0.025, 0.4
         plotting_array_r.append(r_plotting)
 
         
-    fig, axs = plt.subplots(1, 2, figsize=(12, 6), dpi=400)  # Adjust size based on n
+    fig, axs = plt.subplots(1, 2, figsize=(9, 4.2), dpi=400)  # Adjust size based on n
+    font_min = 12
 
     axs = np.array([axs])  # Convert 1D to 2D array for consistent indexing
 
-    
     # make colormap
     cmap = colormaps["plasma"]
     colormap = [cmap(i) for i in np.linspace(0, 1, len(plotting_array_r))]
@@ -104,7 +104,7 @@ def plot_q_J_side_by_side_singleshot(shot, t_lims=[0, 1000], r_lims=[-0.025, 0.4
         # handle axes
         axs[0, 0].set_xlim(r_min, r_max)
         axs[0, 0].set_ylim(J_min, J_max)
-        axs[0, 0].set_ylabel(r"$J_{\phi}$ $[MA/m^2]$", fontsize=18)
+        axs[0, 0].set_ylabel(r"$J_{\phi}$ $[MA/m^2]$", fontsize=font_min+2)
         # add label
         
     # q plot
@@ -114,26 +114,24 @@ def plot_q_J_side_by_side_singleshot(shot, t_lims=[0, 1000], r_lims=[-0.025, 0.4
         # handle axes
         axs[0, 1].set_xlim(r_min, r_max)
         axs[0, 1].set_ylim(q_min, q_max)
-        axs[0, 1].set_ylabel(r"$q(r)$", fontsize=18)
+        axs[0, 1].set_ylabel(r"$q$", fontsize=font_min+2)
         axs[0,1].yaxis.grid(True, zorder=3)
                     
     # general settings to add at the end
         # x label settings
-    axs[0, 0].set_xlabel("r [m]", fontsize=18)
-    axs[0, 1].set_xlabel("r [m]", fontsize=18)
+    axs[0, 0].set_xlabel("r [m]", fontsize=font_min+2)
+    axs[0, 1].set_xlabel("r [m]", fontsize=font_min+2)
         # tick params
-    axs[0, 0].tick_params(axis='both', labelsize=14)
-    axs[0, 1].tick_params(axis='both', labelsize=14)
+    axs[0, 0].tick_params(axis='both', labelsize=font_min)
+    axs[0, 1].tick_params(axis='both', labelsize=font_min)
 
-    
-    
-    
-    
+    # get legend
     h, l = axs[0, 0].get_legend_handles_labels()
     plt.tight_layout()
-    plt.subplots_adjust(bottom=0.22, top=0.9)
-    fig.legend(h, l, loc='lower center', ncol=6, bbox_to_anchor=(0.5, 0), frameon=False, fontsize=14)
-    fig.suptitle(f"Shot {shot} "+r"$J_\phi(r)$ and $q(r)$ Profiles", fontsize=24)
+    plt.subplots_adjust(bottom=0.26, top=0.9)
+    fig.legend(h, l, loc='lower center', ncol=6, bbox_to_anchor=(0.5, 0), frameon=False, fontsize=font_min)
+    
+    fig.suptitle(f"Shot {shot} "+r"$J_\phi(r)$ and $q(r)$ Profiles" if title else None, fontsize=font_min+6)
     fig.savefig(f"/home/jupyter-humerben/axuv_paper/plot_outputs/J_q_r/J_q_r_{shot}.png", bbox_inches='tight')
     plt.close()
 

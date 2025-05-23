@@ -19,6 +19,7 @@ import custom_plot_scripts.plot_axuv_elongation as plot_axuv_elong
 import custom_plot_scripts.plot_axuv_energy_principle as plot_energy_principle
 import custom_plot_scripts.plot_dT_phase as plot_thomson
 import custom_plot_scripts.plot_slope_dist_elong_li1 as plot_slope_dist_elong_li1
+import custom_plot_scripts.plot_dIpl_li1 as plot_dIpl_dli1
 # import custom_plot_scripts.plot_inductance_gun_flux as plot_ind_gun_flux
     # non specific plotting scripts
 import plot_tools.plot_over_phase as plot_phase
@@ -73,15 +74,15 @@ if __name__ == '__main__':
     # results plots
         # multi q plot
     # plot_q_J.plot_q_J_side_by_side([21119, 22289], [0, 0.012])
-    plot_q_J.plot_q_J_side_by_side_singleshot(22289, [0, 0.012], q_lims=[0.5,4.5])
-    plot_q_J.plot_q_J_side_by_side_singleshot(22605, [0, 0.012], q_lims=[0.5,4.5])
+    # plot_q_J.plot_q_J_side_by_side_singleshot(22289, [0, 0.012], q_lims=[0.5,4.5])
+    # plot_q_J.plot_q_J_side_by_side_singleshot(22605, [0, 0.012], q_lims=[0.5,4.5])
 
         # elongation plots
             # elongation li1
     # plot_elongation.plot_elongation_li1(non_sustain_shots, non_sustain_gun_flux, t_lims=[0, 0.01], save=True)
     # plot_elongation.plot_elongation_li1_matplotlib([22603, 22605], [0, 0.012])
-    plot_elongation.plot_elongation_li1_triple_matplotlib(non_sustain_low_gun_flux_and_formation, non_sustain_low_gun_flux_high_formation,
-                                                          non_sustain_high_gun_flux_and_formation, t_lims=[0, 0.012], faded_traces=True)
+
+    # plot_elongation.plot_elongation_li1_matplotlib_singleshot(22605, [0, 0.01])
             # elongation phase
     # plot_elongation_phase.plot_elongation_phase_slope_matplotlib(sustain_shots_early_crash, [0, 0.012])
     # plot_elongation_phase.plot_elongation_phase(sustain_shots_early_crash, [0, 0.2])
@@ -100,6 +101,22 @@ if __name__ == '__main__':
     # plot_phase.plot_dColumn_dPhase_over_phase(sustain_shots_early_crash, 'ParticleInventory', psibar=1, t_lims=[0, 0.012])
     # plot_phase.plot_column_over_phase(sustain_shots_early_crash, 'Ipl', psibar=1, t_lims=[0, 0.012])
     # plot_phase.plot_column_over_phase([22603, 22605], 'Ipl', psibar=1, t_lims=[0, 0.012], sbc=sbc)
+    # plot_dIpl_dli1.plot_dIpl_dli1_colored_by_gun_flux(non_sustain_shots, non_sustain_gun_flux)
+    
+    
+    # plots for poster
+        # methods
+    plot_axuv_crash_calcs.plot_axuv_norm_non_norm(22289, [0,0.018])
+        # results
+            # DTM
+    plot_q_J.plot_q_J_side_by_side_singleshot(22289, [0, 0.012], q_lims=[0.5,4.5])
+    plot_elongation.plot_elongation_li1_triple_matplotlib(non_sustain_low_gun_flux_and_formation, non_sustain_low_gun_flux_high_formation,
+                                    non_sustain_high_gun_flux_and_formation, t_lims=[0, 0.012], faded_traces=True, high_res=False)
+    plot_dIpl_dli1.plot_dIpl_dli1_colored_by_gun_flux_grouped(non_sustain_shots, non_sustain_gun_flux,
+                                    non_sustain_low_gun_flux_and_formation, non_sustain_low_gun_flux_high_formation, non_sustain_high_gun_flux_and_formation)
+            # IRE
+    plot_elongation_phase.plot_elongation_phase_slope_matplotlib(sustain_shots_early_crash)
+    
     
         # thomson
     # plot_thomson.plot_dT_phase(sustain_shots_early_crash)

@@ -67,8 +67,28 @@ def plot_elongation_phase_slope_matplotlib(shots, t_lims=[0, 1000], sbc=Sbc()):
             shots_plotting.append(shots[s])
             times_plotting.append(d_times)
     
+    # make means that go through all the values
+    all_phases = []
+    all_elongations = []
+    all_li1s = []
+    for i in range(len(x_plotting)):
+        for j in range(len(x_plotting[i])):
+            all_phases.append(float(x_plotting[i][j]))
+            all_elongations.append(float(elong_lfs_plotting[i][j]))
+            all_li1s.append(float(li1_plotting[i][j]))
+            
+    sorting_inds = np.argsort(all_phases)
+    all_phases = [all_phases[i] for i in sorting_inds]
+    all_elongations = [all_elongations[i] for i in sorting_inds]
+    all_li1s = [all_li1s[i] for i in sorting_inds]
+        
+        
+    elong_mean = rolling_mean_time(all_phases, all_elongations, 0.1)
+    li1_mean = rolling_mean_time(all_phases, all_li1s, 0.1)
+    
     # make plot
-    fig, axs = plt.subplots(1, 2, figsize=(10, 5), dpi=400)  # Adjust size based on n
+    fig, axs = plt.subplots(1, 2, figsize=(6.5, 3.5), dpi=400)  # Adjust size based on n
+    font_min = 12
 
     # Ensure axs is always a 2D array
     axs = np.array([axs])  # Convert 1D to 2D array for consistent indexing
@@ -76,37 +96,66 @@ def plot_elongation_phase_slope_matplotlib(shots, t_lims=[0, 1000], sbc=Sbc()):
     # actually plot values
     for i in range(len(x_plotting)):
         # elongation plot
-        axs[0,0].plot(x_plotting[i], elong_lfs_plotting[i], color='grey', alpha=0.3, zorder=1)
+        axs[0,0].plot(x_plotting[i], elong_lfs_plotting[i], color='grey', alpha=0.4, zorder=1)
         axs[0,0].scatter(x_plotting[i], elong_lfs_plotting[i], alpha=0.7, zorder=2, marker='.')
         
         # inductance plot
-        axs[0,1].plot(x_plotting[i], li1_plotting[i], color='grey', alpha=0.3, zorder=1)
+        axs[0,1].plot(x_plotting[i], li1_plotting[i], color='grey', alpha=0.4, zorder=1)
         axs[0,1].scatter(x_plotting[i], li1_plotting[i], alpha=0.7, zorder=2, marker='.')
     
+    axs[0,0].plot(all_phases, elong_mean, linewidth=3, color='r', zorder=2, label=r"Rolling mean"+"\n"+r"$window=0.1$")
+    axs[0,1].plot(all_phases, li1_mean, linewidth=3, color='r', zorder=2, label=r"Rolling mean"+"\n"+r"$window=0.1$")
+    axs[0,0].plot([], [], color='grey', zorder=2, label=r"Traces of "+"\n"+r"individual shots", alpha=0.8)
+    axs[0,1].plot([], [], color='grey', zorder=2, label=r"Traces of "+"\n"+r"individual shots", alpha=0.8)
+    
     # set labels
-    labels_fontsize=14
+    labels_fontsize=font_min+2
         # elongation
-    axs[0,0].set_ylabel(r"$d\kappa/dp$", fontsize=labels_fontsize)
-    axs[0,0].set_xlabel("phase", fontsize=labels_fontsize)
-    axs[0,0].set_xlim([0.25, 1.75])
-    axs[0,0].grid(True, zorder=0)
+    axs[0,0].set_ylabel(r"$d\mathcal{K}/dph_{cr}$", fontsize=labels_fontsize)
+    axs[0,0].set_xlabel(r"$ph_{cr}$", fontsize=labels_fontsize)
+    axs[0,0].set_xlim([0.45, 1.55])
+    axs[0,0].set_ylim([-0.5,0.75])
+    axs[0,0].grid(True, zorder=0, alpha=0.4)
         # inductance
-    axs[0,1].set_ylabel(r"$d\ell_{i1}/dp$", fontsize=labels_fontsize)
-    axs[0,1].set_xlabel("phase", fontsize=labels_fontsize)
-    axs[0,1].set_xlim([0.25, 1.75])
-    axs[0,1].grid(True, zorder=0)
+    axs[0,1].set_ylabel(r"$d\ell_{i1}/dph_{cr}$", fontsize=labels_fontsize)
+    axs[0,1].set_xlabel(r"$ph_{cr}$", fontsize=labels_fontsize)
+    axs[0,1].set_xlim([0.45, 1.55])
+    axs[0,1].set_ylim([-2,3])
+    axs[0,1].grid(True, zorder=0, alpha=0.4)
     
-    fig.suptitle(r"Derivatives of $\kappa$ and $\ell_{i1}$ Over Phase"+f"\n{len(shots)} Shots", fontsize=labels_fontsize+4)
-
-    plt.savefig(f"/home/jupyter-humerben/axuv_paper/plot_outputs/elongation_li1_phase_{len(shots)}shots.png")
-
-
-
+    axs[0, 0].tick_params(axis='both', labelsize=font_min)
+    axs[0, 1].tick_params(axis='both', labelsize=font_min)
+    axs[0, 0].legend(loc='upper right', fontsize=font_min)
+    axs[0, 1].legend(loc='upper right', fontsize=font_min)
     
-    
-    
+    # fig.suptitle(r"Derivatives of $\kappa$ and $\ell_{i1}$ Over Phase"+f"\n{len(shots)} Shots", fontsize=labels_fontsize+4)
+
+    plt.tight_layout()
+    plt.savefig(f"/home/jupyter-humerben/axuv_paper/plot_outputs/elongation_li1/elongation_li1_phase_{len(shots)}shots.png")
     
     return
+
+def rolling_mean_time(times, vals, window_size):
+    """
+    Compute rolling mean over a time-based window.
+    
+    Args:
+        times (np.ndarray): 1D array of time values (must be sorted).
+        vals (np.ndarray): 1D array of values corresponding to `times`.
+        window_size (float): Time window size for averaging (same units as `times`).
+    
+    Returns:
+        np.ndarray: Rolling mean values.
+    """
+    times = np.array(times)
+    vals = np.array(vals)
+    means = np.empty_like(vals)
+    for i in range(len(times)):
+        t0 = times[i] - window_size / 2
+        t1 = times[i] + window_size / 2
+        mask = (times >= t0) & (times <= t1)
+        means[i] = np.mean(vals[mask])
+    return means
 
 
 
