@@ -198,6 +198,103 @@ def plot_axuv_norm_non_norm(shot, t_lims=[0, 1000], sbc=Sbc()):
     
     
     return
+
+
+
+
+def plot_axuv_norm_non_norm_combined(shot, t_lims=[0, 1000], sbc=Sbc()):
+    # unpack limits
+    t_min, t_max = t_lims
+    
+    # prepare and unpack crash data
+    crash_df = load_crash_data(shot)
+    
+    # set up SBC and load data
+        # load data
+    sbc.experiment.set("pi3b")
+    df_axuv = sbc.get(asset="axuv_amps", columns=['t', 'A'], shot=shot)
+        # select sensor
+    df_axuv = df_axuv[df_axuv.sensor_number == 21]
+        # trim times
+    df_axuv = df_axuv[df_axuv['t'] >= t_min]
+    df_axuv = df_axuv[df_axuv['t'] <= t_max]
+    
+    # unpack and reorder arrays
+        # unpack arrays
+    A = np.array(df_axuv['A'])
+    t = np.array(df_axuv['t'])
+        # get indices for sorting
+    t_indices = np.argsort(t)
+        # sort arrays
+    A_raw = np.array([A[i]*10**9 for i in t_indices])
+    t = np.array([t[i]*1000 for i in t_indices])
+        
+    # filters and pre-processing
+    A_lp = lowpass_fft(A_raw, cutoff=100000, fs=1/abs(t[1]-t[0]))
+    A_sg = savgol_filter(A_lp, int(1/abs(t[1]-t[0])), 3)
+    dA = np.gradient(A_sg, abs(t[1] - t[0]))
+    dA_sg = savgol_filter(dA, int(1/abs(t[1]-t[0])), 3)
+    ddA = np.gradient(dA_sg, abs(t[1]-t[0]))
+    ddA_sg = savgol_filter(ddA, int(1/abs(t[1]-t[0])), 3)
+    
+    # get normalized values for plotting
+    A_norm = normalize(A_sg)
+    A_sg = A_norm
+    dA_norm = normalize(dA_sg)
+    ddA_norm = normalize(ddA_sg)
+    
+    
+    # make plot
+    fig = plt.figure(figsize=(5, 5), dpi=400)
+    
+    font_min=12
+
+    # Ensure axs is always a 2D array
+    
+    # add in background crash info
+    for i in range(len(crash_df.t)):
+        crash_boundaries = [crash_df.pre_crash_t[i]*1000, crash_df.t[i]*1000, crash_df.post_crash_t[i]*1000]
+        plt.vlines([crash_boundaries[0], crash_boundaries[2]], -1, 1, linewidth=0.5, color='r', alpha=0.8)
+        plt.fill_between(x=[crash_boundaries[0], crash_boundaries[2]], y1=-1, y2=1, color='r', alpha=0.1)
+        plt.vlines([crash_boundaries[1]], -1, 1, color='k', zorder=10)
+    plt.vlines([t_lims[0]], -1, 1, color='k', zorder=10)
+    plt.vlines([t_lims[1]*1000], -1, 1, color='k', zorder=10)
+        
+        
+    # make false labels for non-norm crash data
+    plt.fill_between(x=[0], y1=[0], color='r', alpha=0.2, label='Soft X-ray Crash Region')
+    plt.vlines([], -1, 1, color='k', label='Integer Values of Crash Phase')
+    
+    # make normalized plot
+        # plot primary traces
+    plt.plot(t, A_norm, label="Filtered Soft X-ray Data")
+    plt.plot(t, dA_norm, label="Filtered Soft X-ray First Time Derivative Data")
+    plt.plot(t, ddA_norm, label="Filtered Soft X-ray Second Time Derivative Data")
+        # make legend
+    plt.ylabel(r"Normalized Soft X-ray Data", fontsize=font_min+2)
+    plt.xlabel(r"time [ms]", fontsize=font_min+2)
+    
+    # misc settings for both axes
+        # grid
+    plt.grid(True, alpha=0.4)
+        # tick params
+    plt.tick_params(axis='both', labelsize=font_min)
+    
+    plt.tight_layout()
+    plt.subplots_adjust(bottom=0.35)
+    
+    # set legends for both plots
+    plt.legend(fontsize=font_min, columnspacing=0.5, handletextpad=0.3, handlelength=1.5, loc='upper center', bbox_to_anchor=(0.4, -0.125), frameon=False)
+    
+    
+    # save plot
+    plt.savefig(f"/home/jupyter-humerben/axuv_paper/plot_outputs/crash_detection/axuv_norm_non-norm_combined_{shot}.png")
+
+    
+    
+    return
+
+
     
     
 def lowpass_fft(data, cutoff, fs=1.0):

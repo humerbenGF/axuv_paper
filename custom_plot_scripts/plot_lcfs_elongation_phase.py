@@ -111,14 +111,14 @@ def plot_elongation_phase_slope_matplotlib(shots, t_lims=[0, 1000], sbc=Sbc()):
     # set labels
     labels_fontsize=font_min+2
         # elongation
-    axs[0,0].set_ylabel(r"$d\mathcal{K}/dph_{cr}$", fontsize=labels_fontsize)
-    axs[0,0].set_xlabel(r"$ph_{cr}$", fontsize=labels_fontsize)
+    axs[0,0].set_ylabel(r"$d\kappa/dph_{\mathrm{cr}}$", fontsize=labels_fontsize)
+    axs[0,0].set_xlabel(r"$ph_{\mathrm{cr}}$", fontsize=labels_fontsize)
     axs[0,0].set_xlim([0.45, 1.55])
     axs[0,0].set_ylim([-0.5,0.75])
     axs[0,0].grid(True, zorder=0, alpha=0.4)
         # inductance
-    axs[0,1].set_ylabel(r"$d\ell_{i1}/dph_{cr}$", fontsize=labels_fontsize)
-    axs[0,1].set_xlabel(r"$ph_{cr}$", fontsize=labels_fontsize)
+    axs[0,1].set_ylabel(r"$d\ell_{i1}/dph_{\mathrm{cr}}$", fontsize=labels_fontsize)
+    axs[0,1].set_xlabel(r"$ph_{\mathrm{cr}}$", fontsize=labels_fontsize)
     axs[0,1].set_xlim([0.45, 1.55])
     axs[0,1].set_ylim([-2,3])
     axs[0,1].grid(True, zorder=0, alpha=0.4)

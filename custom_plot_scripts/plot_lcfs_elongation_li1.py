@@ -325,9 +325,9 @@ def plot_elongation_li1_triple_matplotlib(shots_1, shots_2, shots_3, t_lims=[0,1
     
     # plot traces and scatter
     shots_2D = [shots_1, shots_2, shots_3]
-    group_descriptions = [r"a) $U_{form}\leq19.36MJ$"+"\n"+r"$\psi_{gun}<100mWb$",
-                          r"b) $U_{form}=29.04MJ$"+"\n"+r"$\psi_{gun}<100mWb$",
-                          r"c) $U_{form}\geq31.74MJ$"+"\n"+r"$\psi_{gun}>130mWb$"]
+    group_descriptions = [r"a) $U_{\mathrm{form}}\leq445\,\mathrm{kJ}$"+"\n"+r"$\psi_{\mathrm{inj}}<100\,\mathrm{mWb}$",
+                          r"b) $U_{\mathrm{form}}=647\,\mathrm{kJ}$"+"\n"+r"$\psi_{\mathrm{inj}}<100\,\mathrm{mWb}$",
+                          r"c) $U_{\mathrm{form}}\geq703\,\mathrm{kJ}$"+"\n"+r"$\psi_{\mathrm{inj}}>130\,\mathrm{mWb}$"]
     
     for i in range(len(shots_2D)):
         shots_singlepanel = shots_2D[i]
@@ -369,8 +369,8 @@ def plot_elongation_li1_triple_matplotlib(shots_1, shots_2, shots_3, t_lims=[0,1
     
     # settings for the overall plot 
         # titles
-    plt.suptitle(r"LCFS Elongation $\mathcal{K}$ over Internal Inductance $\ell_{i1}$" if title else None, fontsize=font_min+6)
-    axs[0, 0].set_ylabel(r"$\mathcal{K}$", fontsize=font_min+2)
+    plt.suptitle(r"LCFS Elongation $\kappa$ over Internal Inductance $\ell_{i1}$" if title else None, fontsize=font_min+6)
+    axs[0, 0].set_ylabel(r"$\kappa$", fontsize=font_min+2)
         # legend
     for i in range(len(times_plotting[list(times_plotting.keys())[0]])):
         axs[0, 1].scatter([],[], color=colors[i], label=f"t={int(times_plotting[list(times_plotting.keys())[0]][i]*1000)}ms")
@@ -496,9 +496,9 @@ def plot_elongation_li1_matplotlib_singleshot(shot, t_lims=[0,1000]):
     
     # add labels to plot
         # title and axes
-    plt.title(f"Shot {shot} "+r"$\mathcal{K}$ over $\ell_{i1}$", fontsize=font_min+6)
+    plt.title(f"Shot {shot} "+r"$\kappa$ over $\ell_{i1}$", fontsize=font_min+6)
     plt.xlabel(r"$\ell_{i1}$", fontsize=font_min+2)
-    plt.ylabel(r"$\mathcal{K}$", fontsize=font_min+2)
+    plt.ylabel(r"$\kappa$", fontsize=font_min+2)
     plt.tick_params(axis='both', labelsize=font_min)
     plt.grid(True, alpha=0.4)
         # legend

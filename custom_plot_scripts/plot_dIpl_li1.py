@@ -72,13 +72,13 @@ def plot_dIpl_dli1_colored_by_gun_flux_grouped(shots, gun_fluxes, group_1, group
     
     fontmin=12
     # scatter
-    plt.scatter(df.slope, df.li1, c=df.gun_flux, cmap='viridis', marker='.')
+    plt.scatter(df.slope, df.li1, c=df.gun_flux, cmap='viridis', marker='.', label='Shots not in Figure 12')
     for k in markers_plotting.keys():
         plt.scatter(slopes_plotting[k], li1_plotting[k], c=gun_flux_plotting[k], marker=markers_plotting[k], s=36 if markers_plotting[k] == 's' else 75,
                     cmap='viridis', vmin=min(df.gun_flux), vmax=max(df.gun_flux), edgecolors='black', linewidths=0.5, label=group_labels[k])
     
     # labels
-    plt.xlabel(r'$dI_{\phi}/dt$ $[MA/s]$', fontsize=fontmin+2)
+    plt.xlabel(r'$dI_{\phi}/dt\,\mathrm{[MA/s]}$', fontsize=fontmin+2)
     plt.ylabel(r'$\ell_{i1}$', fontsize=fontmin+2)
     plt.title(r"Internal Inductance $\ell_{i1}$ Over"+"\n"+r"Plasma Current Ramp Rate $dI_{\phi}/dt$" if title else None, fontsize=fontmin+6)
     
@@ -88,7 +88,7 @@ def plot_dIpl_dli1_colored_by_gun_flux_grouped(shots, gun_fluxes, group_1, group
     
     # colorbar
     cbar = plt.colorbar()
-    cbar.set_label(label=r'$\psi_{gun}$', fontsize=fontmin+2)
+    cbar.set_label(label=r'$\psi_{\mathrm{inj}}$', fontsize=fontmin+2)
     cbar.ax.tick_params(axis='both', labelsize=fontmin)
     
     plt.legend(fontsize=fontmin)

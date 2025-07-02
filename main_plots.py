@@ -2,6 +2,7 @@
 ###################################################################################################
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 # import sandbox client
 ###################################################################################################
@@ -20,6 +21,7 @@ import custom_plot_scripts.plot_axuv_energy_principle as plot_energy_principle
 import custom_plot_scripts.plot_dT_phase as plot_thomson
 import custom_plot_scripts.plot_slope_dist_elong_li1 as plot_slope_dist_elong_li1
 import custom_plot_scripts.plot_dIpl_li1 as plot_dIpl_dli1
+import custom_plot_scripts.plot_crashes_ss_li as plot_crashes_ss_li
 # import custom_plot_scripts.plot_inductance_gun_flux as plot_ind_gun_flux
     # non specific plotting scripts
 import plot_tools.plot_over_phase as plot_phase
@@ -105,8 +107,13 @@ if __name__ == '__main__':
     
     
     # plots for poster
+    plt.rcParams['mathtext.fontset'] = 'stix'
+    plt.rcParams['mathtext.fontset'] = 'dejavuserif'
+    plt.rcParams['font.family'] = 'DejaVu Serif'
+    plt.rcParams['font.serif'] = ['DejaVu Serif']
         # methods
     plot_axuv_crash_calcs.plot_axuv_norm_non_norm(22289, [0,0.018])
+    plot_axuv_crash_calcs.plot_axuv_norm_non_norm_combined(22289, [0,0.018])
         # results
             # DTM
     plot_q_J.plot_q_J_side_by_side_singleshot(22289, [0, 0.012], q_lims=[0.5,4.5])
@@ -116,6 +123,7 @@ if __name__ == '__main__':
                                     non_sustain_low_gun_flux_and_formation, non_sustain_low_gun_flux_high_formation, non_sustain_high_gun_flux_and_formation)
             # IRE
     plot_elongation_phase.plot_elongation_phase_slope_matplotlib(sustain_shots_early_crash)
+    plot_crashes_ss_li.plot_percent_chance_crash_before_time_over_ss_li(shot_list, [0.003, 0.005, 0.007, 0.009, 0.011], True)
     
     
         # thomson
@@ -144,3 +152,5 @@ if __name__ == '__main__':
     # plot_elongation.plot_elongation_li1_at_crashes(non_sustain_high_gun_flux_and_formation, [22744], [0, 0.012], name_extension="high_flux")
     # plot_elongation.plot_elongation_li1_at_crashes(non_sustain_low_gun_flux_high_formation, [22289], [0, 0.012], name_extension="low_flux")
     # plot_elongation.plot_elongation_li1_at_crashes([*non_sustain_high_gun_flux_and_formation, *non_sustain_low_gun_flux_high_formation], [22289], [0, 0.012], plotly=True)
+    
+    # plot_axuv_elong.plot_axuv_and_elongation_dual_plot(22602, t_lims=[0,0.012])

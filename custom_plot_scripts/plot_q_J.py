@@ -104,7 +104,7 @@ def plot_q_J_side_by_side_singleshot(shot, t_lims=[0, 1000], r_lims=[-0.025, 0.4
         # handle axes
         axs[0, 0].set_xlim(r_min, r_max)
         axs[0, 0].set_ylim(J_min, J_max)
-        axs[0, 0].set_ylabel(r"$J_{\phi}$ $[MA/m^2]$", fontsize=font_min+2)
+        axs[0, 0].set_ylabel(r"$J_{\phi}\,\mathrm{[MA/m^2]}$", fontsize=font_min+2)
         # add label
         
     # q plot
@@ -119,8 +119,8 @@ def plot_q_J_side_by_side_singleshot(shot, t_lims=[0, 1000], r_lims=[-0.025, 0.4
                     
     # general settings to add at the end
         # x label settings
-    axs[0, 0].set_xlabel("r [m]", fontsize=font_min+2)
-    axs[0, 1].set_xlabel("r [m]", fontsize=font_min+2)
+    axs[0, 0].set_xlabel(r"$r\,\mathrm{[m]}$", fontsize=font_min+2)
+    axs[0, 1].set_xlabel(r"$r\,\mathrm{[m]}$", fontsize=font_min+2)
         # tick params
     axs[0, 0].tick_params(axis='both', labelsize=font_min)
     axs[0, 1].tick_params(axis='both', labelsize=font_min)

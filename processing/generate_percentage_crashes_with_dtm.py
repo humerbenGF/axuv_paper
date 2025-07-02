@@ -98,6 +98,49 @@ def get_percentage_double_surface_crossings_leading_to_crash(shots, rational_sur
     
     return
 
+def get_percent_double_surface_crossing_while_assigning_every_crash(shots, rational_surfaces_list=[1, 3/2, 2, 5/2, 3], sbc=Sbc()):
+    sbc.user.set('humerben')
+    sbc.experiment.set('pi3b')
+    multishot_crash = load_crash(shots)
+    
+    data = {"total":0}
+    first_crashes_per_surface = {}
+    
+    for surface in rational_surfaces_list:
+        data[surface] = 0
+    
+    for shot in shots:
+        if shot not in np.array(multishot_crash.shot):
+            continue
+        
+        # prep data for this specific shot
+        rat_q_df = det_rat_q_ss(shot, rational_surfaces_list, sbc)
+        rat_q_df.loc[:, 'psibar'] = rat_q_df['psibar'].fillna(0)
+        crash_df = multishot_crash[multishot_crash.shot == shot]
+        
+        # get timing information
+        first_crash_time = np.min(crash_df.t)
+        recon_times = np.sort(np.unique(rat_q_df[rat_q_df.t < first_crash_time].t))[::-1]
+        crossing = False
+        for recon_time in recon_times:
+            for surface in rational_surfaces_list:
+                rat_q_df_st_ss = rat_q_df[(rat_q_df.t == recon_time) & (rat_q_df.surface == surface)]
+                inner_crossing = True if rat_q_df_st_ss[rat_q_df_st_ss.gt_qmin == False].psibar.iloc[0] > 0 else False
+                outer_crossing = True if rat_q_df_st_ss[rat_q_df_st_ss.gt_qmin == True].psibar.iloc[0] > 0 else False
+                if inner_crossing and outer_crossing:
+                    data[surface] += 1
+                    data['total'] += 1
+                    crossing = True
+                    break
+                
+            if crossing:
+                break
+    
+    for k in data.keys():
+        print(f"q={k} surface: {data[k]}/{data['total']}, {data[k]/data['total']*100}%")
+    
+    return
+
 
 def custom_max(surfaces_with_crash):
     if len(surfaces_with_crash) == 0:
@@ -115,4 +158,5 @@ def printout_crash_surface_data(data_dict):
 
 
 if __name__ == '__main__':
-    get_percentage_double_surface_crossings_leading_to_crash([22289, 22744])
+    # get_percentage_double_surface_crossings_leading_to_crash([22289, 22744])
+    get_percent_double_surface_crossing_while_assigning_every_crash([22289, 22744])

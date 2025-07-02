@@ -52,7 +52,7 @@ def generate_first_crash_time_stats_for_multiple_groups(shots_multi_group, group
             print(f"group {g+1} ({group_names[g]})\n\tmean: {str(stats_multi_group['mean'][g])[:5]}ms, stdev: {str(stats_multi_group['std'][g])[:5]}ms")
 
     if plots:
-        fig = plt.figure(figsize=(7,4))
+        fig = plt.figure(figsize=(6.75,4), dpi=400)
         font_min=12
         # set up colormap
         N = len(first_crashes_multi_group)
@@ -66,8 +66,8 @@ def generate_first_crash_time_stats_for_multiple_groups(shots_multi_group, group
         # labels
         plt.grid(True, zorder=0, alpha=0.4)
         plt.title(r"Probability Density Function $f(t)$ of First Crash Occurance" if title else None, fontsize=font_min+6)
-        plt.xlabel(r"$t\;[ms]$", fontsize=font_min+2)
-        plt.ylabel(r"$f(t)\;[ms]^{-1}$", fontsize=font_min+2)
+        plt.xlabel(r"$t\,\mathrm{[ms]}$", fontsize=font_min+2)
+        plt.ylabel(r"$f(t)\,\mathrm{[ms^{-1}]}$", fontsize=font_min+2)
         plt.legend(loc='upper left', fontsize=font_min)
         plt.tick_params(axis='both', labelsize=font_min)
         plt.tight_layout()

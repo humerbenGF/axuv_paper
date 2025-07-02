@@ -2,6 +2,7 @@
 ###################################################################################################
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 # import sandbox client
 ###################################################################################################
@@ -10,8 +11,9 @@ from gf_sandbox_client.sbc import Sbc
 # import personal scripts
 ###################################################################################################
     # processing
-from processing.generate_percentage_crashes_with_dtm import get_percentage_double_surface_crossings_leading_to_crash
+import processing.generate_percentage_crashes_with_dtm as pct_dtm
 import processing.first_crash_stats_for_shot_grouping as first_crash_stats
+import processing.calculate_shaft_ramp_effect_on_inductance as shaft_ramp_inductance
 
     # filtering
 from filtering_tools.filter_by_lifetime import filter_by_lifetime
@@ -55,7 +57,22 @@ if __name__ == '__main__':
     # generate_first_crash_stats_for_shot_list(non_sustain_high_gun_flux_and_formation)
     # generate_first_crash_stats_for_shot_list(non_sustain_low_gun_flux_high_formation)
     
+    # print('High Gun flux and Formation')
+    # pct_dtm.get_percent_double_surface_crossing_while_assigning_every_crash(non_sustain_high_gun_flux_and_formation)
+    # print('\nLow Gun Flux High Formation')
+    # pct_dtm.get_percent_double_surface_crossing_while_assigning_every_crash(non_sustain_low_gun_flux_high_formation)
+    # print('\nLow Gun Flux and Formation')
+    # pct_dtm.get_percent_double_surface_crossing_while_assigning_every_crash(non_sustain_low_gun_flux_and_formation)
+
+    
+    plt.rcParams['mathtext.fontset'] = 'stix'
+    plt.rcParams['mathtext.fontset'] = 'dejavuserif'
+    plt.rcParams['font.family'] = 'DejaVu Serif'
+    plt.rcParams['font.serif'] = ['DejaVu Serif']
     first_crash_stats.generate_first_crash_time_stats_for_multiple_groups(
         [non_sustain_low_gun_flux_and_formation, non_sustain_low_gun_flux_high_formation, non_sustain_high_gun_flux_and_formation], 
-        [r"$U_{form}\leq19.36MJ$"+"\n"+"$\psi_{gun}<100mWb$", r"$U_{form}=29.04MJ$"+"\n"+"$\psi_{gun}<100mWb$", 
-         r"$U_{form}\geq31.74MJ$"+"\n"+"$\psi_{gun}>130mWb$"], plots=True)
+        [r"$U_{\mathrm{form}}\leq19.36\,\mathrm{MJ}$"+"\n"+r"$\psi_{\mathrm{inj}}<100\,\mathrm{mWb}$", 
+         r"$U_{\mathrm{form}}=29.04\,\mathrm{MJ}$"+"\n"+r"$\psi_{\mathrm{inj}}<100\,\mathrm{mWb}$", 
+         r"$U_{\mathrm{form}}\geq31.74\,\mathrm{MJ}$"+"\n"+r"$\psi_{\mathrm{inj}}>130\,\mathrm{mWb}$"], plots=True)
+    
+    
