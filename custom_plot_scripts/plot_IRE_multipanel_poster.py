@@ -114,7 +114,7 @@ def plot_IRE_multipanel(shot, chords_to_include):
     ax1_twin = axs[1].twinx()
     ax1_twin.plot(pi_t, pi_mean, color=tab_colors[1], zorder=2)
     ax1_twin.fill_between(pi_t, pi_mean+pi_std, pi_mean-pi_std, color=tab_colors[1], alpha=0.3, zorder=2)
-    ax1_twin.set_ylabel(r"$N_p\,\mathrm{[m^{-3}]}$", fontsize=font_min+2, color=tab_colors[1])
+    ax1_twin.set_ylabel(r"$N_p$", fontsize=font_min+2, color=tab_colors[1])
     ax1_twin.set_xlim(0, 10)
     ax1_twin.set_ylim(ymin=0)
         

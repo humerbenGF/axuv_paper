@@ -159,7 +159,7 @@ def dIsh_over_dli1_matplotlib(shots, gun_fluxes, use_crash_as_max=True):
     return
 
 
-def li1_over_inv_Ish_squared(shots, gun_fluxes, use_crash_as_max=True):
+def li1_over_inv_Ish_squared(shots, gun_fluxes, use_crash_as_max=True, matplotlib=True, plotly=False):
     sbc = Sbc()
     sbc.project.set("default")
     sbc.experiment.set('pi3b')
@@ -227,33 +227,51 @@ def li1_over_inv_Ish_squared(shots, gun_fluxes, use_crash_as_max=True):
     r2_adjusted = calc_R2(inv_dIsh_sqr_plot_adjusted, dli1_plot, poly_func_adjusted)
     print(f"fit quality: non-adjusted={r2}, adjusted={r2_adjusted}")
 
+    if matplotlib:
+        plt.figure(figsize=(10,6), dpi=300)
+        plt.grid(True, alpha=0.5, zorder=0)
+        cbar_array=sustain_plot
+        plt.scatter(inv_dIsh_sqr_plot, dli1_plot, c=cbar_array, marker='X', cmap='viridis',
+                    vmin=min(cbar_array), vmax=max(cbar_array), edgecolors='black', linewidths=0.25, zorder=3, alpha=0.2)
+        
+        plt.scatter(inv_dIsh_sqr_plot_adjusted, dli1_plot, c=cbar_array, marker='o', cmap='viridis',
+                    vmin=min(cbar_array), vmax=max(cbar_array), edgecolors='black', linewidths=0.25, zorder=4, alpha=0.9)
+        
+        plt.plot(inv_dIsh_sqr_plot, poly_func(inv_dIsh_sqr_plot), color='r', label=r'Linear Fit: $R^2=$'+f"{round(r2, 3)}\nSlope: {coeffs[0]:.4f}", alpha=0.2, zorder=3, linewidth=2)
+        plt.plot(inv_dIsh_sqr_plot_adjusted, poly_func_adjusted(inv_dIsh_sqr_plot_adjusted), color='r', label=r'Fit to $y=ax\cdot e^{-t/\tau}+b$: $R^2=$'+f"{round(r2_adjusted, 3)}\nSlope: {popt[0]:.4f}",
+                zorder=5, linewidth=2)
+        
+        
+        cbar = plt.colorbar()
+        cbar.set_label(r"$V_\mathrm{sust}\,\mathrm{[kV]}$", fontsize=18)
+        plt.xlabel(r"$\frac{4\,U_{\mathrm{L}}}{\mu_0R_0}\Delta (I_\mathrm{\phi}^{-2})$", fontsize=18)
+        plt.ylabel(r"$\Delta \ell_{i1}$", fontsize=18)
+        title=False
+        plt.title(r"$\Delta \ell_{i1}$ over $\frac{4\,U_{\mathrm{L}}}{\mu_0R_0}\Delta (I_\mathrm{\phi}^{-2})$", fontsize=24) if title else None
+        
+        plt.legend(fontsize=14)
+        plt.tight_layout()
+        plt.savefig("/home/jupyter-humerben/axuv_paper/plot_outputs/current_ramp/dli1_dinv_Ipl_squared.png")
+        plt.close()
     
-    plt.figure(figsize=(10,6), dpi=300)
-    plt.grid(True, alpha=0.5, zorder=0)
-    cbar_array=sustain_plot
-    plt.scatter(inv_dIsh_sqr_plot, dli1_plot, c=cbar_array, marker='o', cmap='viridis',
-                vmin=min(cbar_array), vmax=max(cbar_array), edgecolors='black', linewidths=0.25, zorder=3, alpha=0.2)
+    if plotly:
+        '''
+        fig=go.Figure()
+        
+        fig.add_trace(go.Scatter(x=dli1_dt_plot, y=dIsh_dt_plot, mode='markers', showlegend=False))
     
-    plt.scatter(inv_dIsh_sqr_plot_adjusted, dli1_plot, c=cbar_array, marker='d', cmap='viridis',
-                vmin=min(cbar_array), vmax=max(cbar_array), edgecolors='black', linewidths=0.25, zorder=4, alpha=0.7)
-    
-    plt.plot(inv_dIsh_sqr_plot, poly_func(inv_dIsh_sqr_plot), color='r', label=r'Linear Fit: $R^2=$'+f"{round(r2, 3)}", alpha=0.4, zorder=3, linewidth=2)
-    plt.plot(inv_dIsh_sqr_plot_adjusted, poly_func_adjusted(inv_dIsh_sqr_plot_adjusted), color='r', label=r'Fit to $y=ax\cdot e^{-t/\tau}+b$: $R^2=$'+f"{round(r2_adjusted, 3)}",
-             zorder=5, linewidth=2)
-    
-    
-    cbar = plt.colorbar()
-    cbar.set_label(r"$V_\mathrm{sust}\,\mathrm{[kV]}$", fontsize=18)
-    plt.xlabel(r"$\frac{4\,U_{\mathrm{L}}}{\mu_0R_0}\Delta (I_\mathrm{\phi}^{-2})$", fontsize=18)
-    plt.ylabel(r"$\Delta \ell_{i1}$", fontsize=18)
-    plt.title(r"$\Delta \ell_{i1}$ over $\frac{4\,U_{\mathrm{L}}}{\mu_0R_0}\Delta (I_\mathrm{\phi}^{-2})$", fontsize=24)
-    
-    plt.legend(fontsize=14)
-    plt.tight_layout()
-    plt.savefig("/home/jupyter-humerben/axuv_paper/plot_outputs/current_ramp/dli1_dinv_Ipl_squared.png")
-    plt.close()
-    
-    
+        fig.update_layout(
+            title=dict(
+                text=r"Plot of $dI_{\mathrm{sh}}/dt$ over $\ell_{i1}$",  # Dynamic title
+                x=0.5,
+                y=0.95,
+                font=dict(size=28)
+            ),
+            xaxis_title=r"$d\ell_{i1}/dt\,\mathrm{[s^{-1}]}$",
+            yaxis_title=r"$dI_{\mathrm{sh}}/dt\,\mathrm{[MA/s]}$",  # Replace with actual column name if needed
+        )
+        fig.show()
+        '''
     
     return
 

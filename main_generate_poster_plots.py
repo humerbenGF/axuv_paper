@@ -85,3 +85,6 @@ if __name__ == '__main__':
     plot_IRE_multipanel.plot_IRE_multipanel(22605, ['221', '239', '258', '276'])
     plot_elongation_phase.plot_elongation_phase_slope_matplotlib(sustain_shots_early_crash)
     plot_crashes_ss_li.plot_percent_chance_crash_before_time_over_ss_li(shot_list, [0.003, 0.005, 0.007, 0.009, 0.011], True)
+    
+    # plots just for paper
+    plot_elongation.plot_elongation_li1_matplotlib_singleshot(22605, [0,0.01])

@@ -14,12 +14,16 @@ def calculate_toroidal_angle_multicoil(shot_number, coil_names, crash_index=0, d
         crash_info_dict = json.load(f)
     crash_info_dict_ss = crash_info_dict[str(shot_number)]
     crash_time = crash_info_dict_ss['times'][crash_index]*1000
+    if len(crash_info_dict_ss['times']) > crash_index + 1:
+        next_crash_start = crash_info_dict_ss['pre_crash_times'][crash_index+1]*1000
+    else:
+        next_crash_start = 100000000
     
     tab_colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
     
     data_dict = {}
     for coil_name in coil_names:
-        times, toroidal_angles, poly_coeffs, rsquared = calculate_toroidal_angle_singlecoil(shot_number, crash_time, coil_name, dt, threshold, diagnostic_plot)
+        times, toroidal_angles, poly_coeffs, rsquared = calculate_toroidal_angle_singlecoil(shot_number, crash_time, next_crash_start, coil_name, dt, threshold, diagnostic_plot)
         data_dict[coil_name] = times, toroidal_angles, poly_coeffs, rsquared
     
     if output_plot:
@@ -42,7 +46,7 @@ def calculate_toroidal_angle_multicoil(shot_number, coil_names, crash_index=0, d
     
     return
 
-def calculate_toroidal_angle_singlecoil(shot_number, crash_time, coil_name, dt, threshold, diagnostic_plot):
+def calculate_toroidal_angle_singlecoil(shot_number, crash_time, next_crash_start, coil_name, dt, threshold, diagnostic_plot):
     q_options = {"experiment": "pi3b",
              "manifest": "default",
              "shot": int(shot_number),
@@ -61,16 +65,26 @@ def calculate_toroidal_angle_singlecoil(shot_number, crash_time, coil_name, dt, 
         scalars = data['scalars']
         t_lims = gdt.plotting.calc_xlims(waves_list, scalars)
         t = np.linspace(t_lims[0]*1000, t_lims[1]*1000, len(waves[0]))
-        x_trimmed, w_trimmed = trim_xy_by_range(t, smoothed_wave, crash_time-dt, crash_time+dt)
+        x_trimmed, w_trimmed = trim_xy_by_range(t, smoothed_wave, crash_time-dt, min(crash_time+dt, next_crash_start))
         x_std, w_std = trim_xy_by_range(t, smoothed_wave, crash_time-dt-0.25, crash_time-dt)
         std = np.std(w_std)
         if threshold == 0:
-            threshold = 10*std
-        peaks = signal.find_peaks(w_trimmed, prominence=threshold)[0]
+            threshold = 10
+        peaks = signal.find_peaks(w_trimmed, prominence=threshold*std)[0]
         
-        for peak in peaks:
+        
+        gap=False
+        for p, peak in enumerate(peaks):
+            if p > 0:
+                if (x_trimmed[peaks[p]] - x_trimmed[peaks[p-1]]) > 0.5:
+                    gap=True
+            times.append(x_trimmed[peak]) if not gap else None
+            toroidal_angles.append(int(w.meta['wave_label'][13:16])*2*np.pi/360) if not gap else None
+        '''
+        for p, peak in enumerate(peaks):
             times.append(x_trimmed[peak])
             toroidal_angles.append(int(w.meta['wave_label'][13:16])*2*np.pi/360)
+        '''
             
         
         plt.plot(x_trimmed, w_trimmed, label=w.meta['wave_label'][7:21]) if diagnostic_plot else None

@@ -492,11 +492,11 @@ def plot_elongation_li1_matplotlib_singleshot(shot, t_lims=[0,1000]):
             
     # set limits
     plt.xlim([0.35, 1])
-    plt.ylim([1.6,1.95])
+    plt.ylim([1.6,1.85])
     
     # add labels to plot
         # title and axes
-    plt.title(f"Shot {shot} "+r"$\kappa$ over $\ell_{i1}$", fontsize=font_min+6)
+    # plt.title(f"Shot {shot} "+r"$\kappa$ over $\ell_{i1}$", fontsize=font_min+6)
     plt.xlabel(r"$\ell_{i1}$", fontsize=font_min+2)
     plt.ylabel(r"$\kappa$", fontsize=font_min+2)
     plt.tick_params(axis='both', labelsize=font_min)
@@ -634,7 +634,7 @@ def plot_elongation_li1_matplotlib(shots, t_lims=[0,1000]):
     plt.scatter(crash_plotting_x, crash_plotting_y, marker='x', color='r')
     # add labels to plot
         # title and axes
-    plt.title(r"Plot of $\kappa$ over $\ell_{i1}$ for Chosen Non-Sustain Shots")
+    # plt.title(r"Plot of $\kappa$ over $\ell_{i1}$ for Chosen Non-Sustain Shots")
     plt.xlabel(r"$\ell_{i1}$")
     plt.ylabel(r"$\kappa$")
         # legend

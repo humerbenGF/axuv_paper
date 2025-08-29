@@ -42,7 +42,7 @@ def make_shot_list_edges(min_shot, max_shot):
 
 if __name__ == '__main__':
     shot_list=make_shot_list_edges(19718, 23064)
-    high_time_res=True
+    high_time_res=False
     
     non_sustain = pd.read_csv("/home/jupyter-humerben/axuv_paper/datasets/non_sustain_dataset.csv")
     sustain = pd.read_csv("/home/jupyter-humerben/axuv_paper/datasets/sustain_dataset.csv")
@@ -107,23 +107,25 @@ if __name__ == '__main__':
     
     
     # plots for poster
-    plt.rcParams['mathtext.fontset'] = 'stix'
-    plt.rcParams['mathtext.fontset'] = 'dejavuserif'
-    plt.rcParams['font.family'] = 'DejaVu Serif'
-    plt.rcParams['font.serif'] = ['DejaVu Serif']
-        # methods
-    plot_axuv_crash_calcs.plot_axuv_norm_non_norm(22289, [0,0.018])
-    plot_axuv_crash_calcs.plot_axuv_norm_non_norm_combined(22289, [0,0.018])
-        # results
-            # DTM
-    plot_q_J.plot_q_J_side_by_side_singleshot(22289, [0, 0.012], q_lims=[0.5,4.5])
-    plot_elongation.plot_elongation_li1_triple_matplotlib(non_sustain_low_gun_flux_and_formation, non_sustain_low_gun_flux_high_formation,
-                                    non_sustain_high_gun_flux_and_formation, t_lims=[0, 0.012], faded_traces=True, high_res=False)
-    plot_dIpl_dli1.plot_dIpl_dli1_colored_by_gun_flux_grouped(non_sustain_shots, non_sustain_gun_flux,
-                                    non_sustain_low_gun_flux_and_formation, non_sustain_low_gun_flux_high_formation, non_sustain_high_gun_flux_and_formation)
-            # IRE
-    plot_elongation_phase.plot_elongation_phase_slope_matplotlib(sustain_shots_early_crash)
-    plot_crashes_ss_li.plot_percent_chance_crash_before_time_over_ss_li(shot_list, [0.003, 0.005, 0.007, 0.009, 0.011], True)
+    poster=False
+    if poster:
+        plt.rcParams['mathtext.fontset'] = 'stix'
+        plt.rcParams['mathtext.fontset'] = 'dejavuserif'
+        plt.rcParams['font.family'] = 'DejaVu Serif'
+        plt.rcParams['font.serif'] = ['DejaVu Serif']
+            # methods
+        plot_axuv_crash_calcs.plot_axuv_norm_non_norm(22289, [0,0.018])
+        plot_axuv_crash_calcs.plot_axuv_norm_non_norm_combined(22289, [0,0.018])
+            # results
+                # DTM
+        plot_q_J.plot_q_J_side_by_side_singleshot(22289, [0, 0.012], q_lims=[0.5,4.5])
+        plot_elongation.plot_elongation_li1_triple_matplotlib(non_sustain_low_gun_flux_and_formation, non_sustain_low_gun_flux_high_formation,
+                                        non_sustain_high_gun_flux_and_formation, t_lims=[0, 0.012], faded_traces=True, high_res=False)
+        plot_dIpl_dli1.plot_dIpl_dli1_colored_by_gun_flux_grouped(non_sustain_shots, non_sustain_gun_flux,
+                                        non_sustain_low_gun_flux_and_formation, non_sustain_low_gun_flux_high_formation, non_sustain_high_gun_flux_and_formation)
+                # IRE
+        plot_elongation_phase.plot_elongation_phase_slope_matplotlib(sustain_shots_early_crash)
+        plot_crashes_ss_li.plot_percent_chance_crash_before_time_over_ss_li(shot_list, [0.003, 0.005, 0.007, 0.009, 0.011], True)
     
     
         # thomson
@@ -154,3 +156,5 @@ if __name__ == '__main__':
     # plot_elongation.plot_elongation_li1_at_crashes([*non_sustain_high_gun_flux_and_formation, *non_sustain_low_gun_flux_high_formation], [22289], [0, 0.012], plotly=True)
     
     # plot_axuv_elong.plot_axuv_and_elongation_dual_plot(22602, t_lims=[0,0.012])
+    # plot_elongation.plot_elongation_li1_matplotlib([21112, 22605])
+    plot_elongation_phase.plot_q0_q95_phase_slope_matplotlib(sustain_shots_early_crash)

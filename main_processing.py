@@ -75,4 +75,4 @@ if __name__ == '__main__':
          r"$U_{\mathrm{form}}=29.04\,\mathrm{MJ}$"+"\n"+r"$\psi_{\mathrm{inj}}<100\,\mathrm{mWb}$", 
          r"$U_{\mathrm{form}}\geq31.74\,\mathrm{MJ}$"+"\n"+r"$\psi_{\mathrm{inj}}>130\,\mathrm{mWb}$"], plots=True)
     
-    
+    shaft_ramp_inductance.li1_over_inv_Ish_squared(list(np.append(sustain_shots, non_sustain_shots)), list(np.zeros(len(np.append(sustain_shots, non_sustain_shots)))))
